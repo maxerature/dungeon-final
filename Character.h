@@ -23,6 +23,8 @@ public:
     void setWeapon(string);
     void setExperience(int);
 
+    void takeDamage(int);
+
 protected:
     double health;
     int maxHealth;

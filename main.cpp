@@ -74,7 +74,7 @@ double calculateDamage(Character &offensive, Character &defensive) {
     return damage;
 }
 
-Character newPlayer() {
+Player newPlayer() {
     string name;
     string race;
     string weapon;
@@ -88,19 +88,20 @@ Character newPlayer() {
 
     health = 20 * getRaceModifier(race);
 
-    Character player = Character(race, health, 20, 1);
-    player.setWeapon(weapon);
+    Player player = Player(name, race, weapon, 20, 1);
     return player;
 }
 
-void enemyDefeated(Character *player, Character &enemy) {
-    player->setExperience(player->getExperience() + enemy.getExperience());
+void enemyDefeated(Player &player, Character enemy) {
+    player.setExperience(player.getExperience() +  5);
 }
 
 int main()
 {
-    Character player = newPlayer();
+    Player player = newPlayer();
     Character enemy = Character("kobold", 20, 15, 1);
-    cout << calculateDamage(player, enemy) << endl;
+
+    enemyDefeated(player, enemy);
+    cout << player.getExperience();
     return 0;
 }

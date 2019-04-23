@@ -7,6 +7,7 @@ class Enemy : public Character
 {
 public:
     Enemy();
+
 };
 
 #endif // ENEMY_H
