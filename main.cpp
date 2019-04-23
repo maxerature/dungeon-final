@@ -5,12 +5,13 @@
 using namespace std;
 
 double getRaceModifier(string race) {
-if(race == "human"):
+    if(race == "human"){
         return 1;
-        break;
-    case "dwarf":
+    }
+    if (race == "dwarf"){
         return 0.85;
         break;
+    }
     case "elf":
         return 1.15;
         break;
