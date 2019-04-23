@@ -10,81 +10,97 @@ double getRaceModifier(string race) {
     }
     if (race == "dwarf"){
         return 0.85;
-        break;
     }
-    case "elf":
+    if (race == "elf") {
         return 1.15;
-        break;
-    case "tiefling":
+    }
+    if (race == "tiefling") {
         return 1;
-        break;
-    case "halfling":
+    }
+    if (race == "halfling") {
         return 0.65;
-        break;
-    case "dragonborn":
+    }
+    if (race == "dragonborn") {
         return 0.95;
-        break;
-    case "gnome":
+    }
+    if (race == "gnome") {
         return 0.75;
-        break;
-    case "half-elf":
+    }
+    if (race == "half-elf") {
         return 1;
-        break;
-    case "half-orc":
+    }
+    if (race == "half-orc") {
         return 1.5;
-        break;
-    case "kobold":
-        return ;
-        break;
-    case "beholder":
-        return ;
-        break;
-    case "wight":
-        return ;
-        break;
-    case "owlbear":
-        return ;
-        break;
-    case "mind flayer":
-        return ;
-        break;
-    case "stone troll":
-        return ;
-        break;
-    case "frost troll":
-        return ;
-        break;
-    case "fire elemental":
-        return ;
-        break;
-    case "pseudodragon":
-        return ;
-        break;
-    case "red dragon":
-        return ;
-        break;
-    case "blue dragon":
-        return ;
-        break;
+    }
+    if (race == "kobold") {
+        return 0.95;
+    }
+    if (race == "beholder") {
+        return 3;
+    }
+    if (race == "wight") {
+        return 1.05;
+    }
+    if (race == "owlbear") {
+        return 1.115;
+    }
+    if (race == "mind flayer") {
+        return 2.25;
+    }
+    if (race == "stone troll") {
+        return 4;
+    }
+    if (race == "frost troll") {
+        return 2.25;
+    }
+    if (race == "fire elemental") {
+        return 1.55;
+    }
+    if (race == "pseudodragon") {
+        return 0.95;
+    }
+    if (race == "red dragon") {
+        return 6;
+    }
+    if (race == "blue dragon") {
+        return 6;
     }
 }
 
-int calculateDamage(Character &offensive, Character &defensive) {
-    double base = offensive.getBaseDamage();
-    string offensiveRace = offensive.getRace();
-    string defensiveRace = defensive.getRace();
-    double offensiveRaceModifier = getRaceModifier(offensiveRace);
-    double defensiveRaceModifier = getRaceModifier(defensiveRace);
-    
-    
-
-    
+double calculateDamage(Character &offensive, Character &defensive) {
+    srand(time(0));
+    double randValue = (((double) rand() / (RAND_MAX)) + 1) * 20;
+    double damage = (randValue * offensive.getLevel() * offensive.getBaseDamage()/100 * (getRaceModifier(offensive.getRace()) /getRaceModifier(defensive.getRace())));
+    return damage;
 }
 
+Character newPlayer() {
+    string name;
+    string race;
+    string weapon;
+    int health;
+    cout << "What is your name? ";
+    getline(cin, name);
+    cout << endl << "What race are you? ";
+    getline(cin, race);
+    cout << endl << "What is your weapon of choice? ";
+    getline(cin, weapon);
 
+    health = 20 * getRaceModifier(race);
+
+    Character player = Character(race, health, 20, 1);
+    player.setWeapon(weapon);
+    return player;
+}
+
+void enemyDefeated(Character *player, Character &enemy) {
+    player->setExperience(player->getExperience() + enemy.getExperience());
+}
 
 int main()
 {
-    cout << "Hello World!" << endl;
+    Character player = newPlayer();
+    Character enemy = Character("kobold", 20, 15, 1);
+    cout << calculateDamage(player, enemy) << endl;
     return 0;
 }
