@@ -25,6 +25,7 @@ public:
 
     void takeDamage(int);
 
+    bool alive = true;
 protected:
     double health;
     int maxHealth;
@@ -33,6 +34,7 @@ protected:
     double baseDamage;
     string race;
     string weapon;
+
 };
 
 #endif // CHARACTER_H

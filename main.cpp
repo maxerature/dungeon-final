@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include "Player.h"
 #include "NPC.h"
 #include "Enemy.h"
@@ -88,20 +89,37 @@ Player newPlayer() {
 
     health = 20 * getRaceModifier(race);
 
-    Player player = Player(name, race, weapon, 20, 1);
+    Player player = Player(name, race, weapon, health, 1);
     return player;
 }
 
-void enemyDefeated(Player &player, Character enemy) {
-    player.setExperience(player.getExperience() +  5);
+void enemyDefeated(Player &player, Character &enemy) {
+    player.setExperience(player.getExperience() +  enemy.getExperience());
 }
 
 int main()
 {
+    NPC NPCS = NPC[3];
+
     Player player = newPlayer();
     Character enemy = Character("kobold", 20, 15, 1);
 
     enemyDefeated(player, enemy);
     cout << player.getExperience();
     return 0;
+}
+
+void battle(Player &player, ) {
+    srand(time(0));
+    int enemyCount = rand() % 4 + 1;
+    Enemy enemies[enemyCount];
+    for (int i = 0; i< enemyCount; i++) {
+
+    }
+    while (true) {
+        //bATTLE hAPPENS
+    }
+
+
+
 }
