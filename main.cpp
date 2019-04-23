@@ -85,5 +85,5 @@ int calculateDamage(Character &offensive, Character &defensive) {
 int main()
 {
     cout << "Hello World!" << endl;
-    return 0;
+    return 1;
 }
