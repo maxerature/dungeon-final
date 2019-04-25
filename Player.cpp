@@ -1,12 +1,9 @@
 #include "Player.h"
 
 
-Player::Player(string name, string race, string weapon, int health, int level)
+Player::Player(string name, string race, string weapon)
 {
     this->name = name;
-    this->race = race;
-    this->weapon = weapon;
-    this->maxHealth = health;
-    this->level = level;
-    this->health = health;
+    experience = 0;
+    Character(race, weapon, 1);
 }

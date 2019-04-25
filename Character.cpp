@@ -4,20 +4,21 @@
 Character::Character()
 {
     race = "";
+    weapon = "";
     maxHealth = 0;
     baseDamage = 0;
     level = 0;
-    experience = 0;
-    health = 0;
+    health = maxHealth;
 }
 
-Character::Character(string race, int maxHealth, double baseDamage, int level)
+Character::Character(string race, string weapon, int level)
 {
     this->race = race;
-    this->maxHealth = maxHealth;
-    this->baseDamage = baseDamage;
+    this ->weapon = weapon;
     this->level = level;
-    experience = 0;
+    this->maxHealth = (20 * getRaceModifier(race) * getRaceModifier(race)) + (level * getRaceModifier(race) * 10);
+    this->baseDamage = 20 + (getRaceModifier(race) * level);
+    experience = (5 * getRaceModifier(race)) + (getRaceModifier(race) * level * level);
     health = maxHealth;
 }
 

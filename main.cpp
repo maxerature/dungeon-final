@@ -5,68 +5,6 @@
 #include "Enemy.h"
 using namespace std;
 
-double getRaceModifier(string race) {
-    if(race == "human"){
-        return 1;
-    }
-    if (race == "dwarf"){
-        return 0.85;
-    }
-    if (race == "elf") {
-        return 1.15;
-    }
-    if (race == "tiefling") {
-        return 1;
-    }
-    if (race == "halfling") {
-        return 0.65;
-    }
-    if (race == "dragonborn") {
-        return 0.95;
-    }
-    if (race == "gnome") {
-        return 0.75;
-    }
-    if (race == "half-elf") {
-        return 1;
-    }
-    if (race == "half-orc") {
-        return 1.5;
-    }
-    if (race == "kobold") {
-        return 0.95;
-    }
-    if (race == "beholder") {
-        return 3;
-    }
-    if (race == "wight") {
-        return 1.05;
-    }
-    if (race == "owlbear") {
-        return 1.115;
-    }
-    if (race == "mind flayer") {
-        return 2.25;
-    }
-    if (race == "stone troll") {
-        return 4;
-    }
-    if (race == "frost troll") {
-        return 2.25;
-    }
-    if (race == "fire elemental") {
-        return 1.55;
-    }
-    if (race == "pseudodragon") {
-        return 0.95;
-    }
-    if (race == "red dragon") {
-        return 6;
-    }
-    if (race == "blue dragon") {
-        return 6;
-    }
-}
 
 double calculateDamage(Character &offensive, Character &defensive) {
     srand(time(0));
@@ -87,9 +25,7 @@ Player newPlayer() {
     cout << endl << "What is your weapon of choice? ";
     getline(cin, weapon);
 
-    health = 20 * getRaceModifier(race);
-
-    Player player = Player(name, race, weapon, health, 1);
+    Player player = Player(name, race, weapon);
     return player;
 }
 
@@ -99,22 +35,22 @@ void enemyDefeated(Player &player, Character &enemy) {
 
 int main()
 {
-    NPC NPCS = NPC[3];
+    NPC NPCS[3];
 
     Player player = newPlayer();
-    Character enemy = Character("kobold", 20, 15, 1);
+    Character enemy = Character("kobold", "claws", 1);
 
     enemyDefeated(player, enemy);
     cout << player.getExperience();
     return 0;
 }
 
-void battle(Player &player, ) {
+void battle(Player &player, NPC NPCS) {
     srand(time(0));
     int enemyCount = rand() % 4 + 1;
-    Enemy enemies[enemyCount];
+    Enemy *enemies[enemyCount] = {};
     for (int i = 0; i< enemyCount; i++) {
-
+        //enemies[i] = Enemy();
     }
     while (true) {
         //bATTLE hAPPENS

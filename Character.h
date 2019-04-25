@@ -1,14 +1,14 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include <string>
+#include <global_functions.h>
 using namespace std;
 
 class Character
 {
 public:
     Character();
-    Character(string race, int maxHealth, double baseDamage, int level);
+    Character(string race, string weapon, int level);
     double getBaseDamage();
     string getRace();
     string getWeapon();
