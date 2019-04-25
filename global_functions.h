@@ -2,8 +2,15 @@
 #define GLOBAL_FUNCTIONS_H
 
 #include <string>
+#include <iostream>
 using namespace std;
 
-double getRaceModifier(string race);
+struct Race {
+    string raceName;
+    string defaultWeapon;
+    double raceModifier;
+};
+
+Race chooseRace();
 
 #endif // GLOBAL_FUNCTIONS_H

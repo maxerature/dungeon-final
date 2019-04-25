@@ -8,9 +8,9 @@ class Character
 {
 public:
     Character();
-    Character(string race, string weapon, int level);
+    Character(Race race, int level);
     double getBaseDamage();
-    string getRace();
+    Race getRace();
     string getWeapon();
     int getLevel();
     int getMaxHealth();
@@ -32,7 +32,7 @@ protected:
     int level;
     int experience;
     double baseDamage;
-    string race;
+    Race race;
     string weapon;
 
 };

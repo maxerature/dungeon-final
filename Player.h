@@ -9,7 +9,7 @@ using namespace std;
 class Player : public Character
 {
 public:
-    Player(string name, string race, string weapon);
+    Player(string name, Race race, string weapon);
     
 private:
     bool hasKey;

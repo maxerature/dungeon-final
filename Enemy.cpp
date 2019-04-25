@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
-Enemy::Enemy(string race, string weapon, int level)
+Enemy::Enemy(Race race, int level)
 {
-    Character(race, weapon, level);
+    Character(race, level);
     alive = true;
 }

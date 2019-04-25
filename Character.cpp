@@ -3,7 +3,7 @@
 
 Character::Character()
 {
-    race = "";
+    race = {"none", "none", 0};
     weapon = "";
     maxHealth = 0;
     baseDamage = 0;
@@ -11,14 +11,14 @@ Character::Character()
     health = maxHealth;
 }
 
-Character::Character(string race, string weapon, int level)
+Character::Character(Race race, int level)
 {
     this->race = race;
-    this ->weapon = weapon;
+    this ->weapon = race.defaultWeapon;
     this->level = level;
-    this->maxHealth = (20 * getRaceModifier(race) * getRaceModifier(race)) + (level * getRaceModifier(race) * 10);
-    this->baseDamage = 20 + (getRaceModifier(race) * level);
-    experience = (5 * getRaceModifier(race)) + (getRaceModifier(race) * level * level);
+    this->maxHealth = (20 * race.raceModifier * race.raceModifier) + (level * race.raceModifier * 10);
+    this->baseDamage = 20 + (race.raceModifier * level);
+    experience = (5 * race.raceModifier) + (race.raceModifier * level * level);
     health = maxHealth;
 }
 
@@ -27,7 +27,7 @@ double Character::getBaseDamage()
     return baseDamage;
 }
 
-string Character::getRace()
+Race Character::getRace()
 {
     return race;
 }
@@ -81,3 +81,4 @@ void Character::setExperience(int tempExperience)
 {
     experience = tempExperience;
 }
+
