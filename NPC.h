@@ -6,10 +6,10 @@
 class NPC : public Character
 {
 public:
-    NPC();
+    NPC(string name, Race race, int level);
+    string getName();
     
 private:
-    bool present;
     string name;
 };
 

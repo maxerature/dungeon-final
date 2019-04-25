@@ -7,8 +7,6 @@ class Enemy : public Character
 {
 public:
     Enemy(Race race, int level);
-private:
-    bool alive;
 };
 
 #endif // ENEMY_H
