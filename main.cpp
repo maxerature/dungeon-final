@@ -1,3 +1,7 @@
+#include "Game_Screen.h"
+#include <QApplication>
+
+/*
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -181,6 +185,18 @@ int main()
 
     battle(playerPtr, CurrentNPCS, NPC_NUM);
     return 0;
+} */
+
+
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    Game_Screen w;
+    w.show();
+
+    return a.exec();
 }
+
 
 
