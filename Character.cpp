@@ -82,3 +82,8 @@ void Character::setExperience(int tempExperience)
     experience = tempExperience;
 }
 
+void Character::setBaseDamage(double baseDamage)
+{
+    this->baseDamage = baseDamage;
+}
+

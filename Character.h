@@ -22,7 +22,7 @@ public:
     void setMaxHealth(int);
     void setWeapon(string);
     void setExperience(int);
-
+    void setBaseDamage(double);
     void takeDamage(int);
 
     bool alive = true;

@@ -10,7 +10,7 @@
 using namespace std;
 
 void saveGame(Player *player, NPC *party[3], int NUM_NPC) {
-    fstream saveFile;
+    ofstream saveFile;
     string saveName = "saveFile.txt";
 
     saveFile.open(saveName);
@@ -26,13 +26,84 @@ void saveGame(Player *player, NPC *party[3], int NUM_NPC) {
                 player->getHealth() << endl <<
                 player->getLevel() << endl <<
                 player->getBaseDamage() << endl;
-    saveFile << "PARTY" << endl;
+    saveFile << "PARTY" << endl << NUM_NPC << endl;
     for (int i = 0; i < NUM_NPC; i++) {
-
+        saveFile << party[i]->getName() << endl <<
+                    party[i]->getRace().raceName << endl <<
+                    party[i]->getRace().raceModifier << endl <<
+                    party[i]->getRace().defaultWeapon << endl <<
+                    party[i]->getMaxHealth() << endl <<
+                    party[i]->getHealth() << endl <<
+                    party[i]->getLevel() << endl <<
+                    party[i]->getBaseDamage() << endl;
     }
 
 }
 
+void loadGame(Player &player, NPC NPCS[3], int &NPC_NUM) {
+    ifstream saveFile;
+    string saveName = "saveFile.txt";
+
+    saveFile.open(saveName);
+
+    string tempName;
+    string tempRaceName;
+    double tempRaceMod;
+    string tempRaceWeapon;
+
+    int tempXPToLevel;
+    int tempXP;
+
+    int tempMaxHealth;
+    double tempHealth;
+
+    int tempLevel;
+    double tempBaseDamage;
+
+    string line;
+
+    saveFile >> line;
+    if (line == "PLAYER") {
+        getline(saveFile, tempName);
+        getline(saveFile, tempRaceName);
+        saveFile >> tempRaceMod;
+        getline(saveFile, tempRaceWeapon);
+        saveFile >> tempXPToLevel;
+        saveFile >> tempXP;
+        saveFile >> tempMaxHealth;
+        saveFile >> tempHealth;
+        saveFile >> tempLevel;
+        saveFile >> tempBaseDamage;
+
+        player = Player(tempName,{tempRaceName, tempRaceWeapon, tempRaceMod}, tempRaceWeapon);
+        player.setXPToLevel(tempXPToLevel);
+        player.setXP(tempXP);
+        player.setMaxHealth(tempMaxHealth);
+        player.setHealth(tempHealth);
+        player.setLevel(tempLevel);
+        player.setBaseDamage(tempBaseDamage);
+    }
+
+    saveFile >> line;
+    if (line == "PARTY") {
+        saveFile >> NPC_NUM;
+        for (int i = 0; i < NPC_NUM; i++) {
+            getline(saveFile, tempName);
+            getline(saveFile, tempRaceName);
+            saveFile >> tempRaceMod;
+            getline(saveFile, tempRaceWeapon);
+            saveFile >> tempMaxHealth;
+            saveFile >> tempHealth;
+            saveFile >> tempLevel;
+            saveFile >> tempBaseDamage;
+
+            NPCS[i] = NPC(tempName, {tempRaceName, tempRaceWeapon, tempRaceMod}, tempLevel);
+            NPCS[i].setHealth(tempHealth);
+            NPCS[i].setMaxHealth(tempMaxHealth);
+            NPCS[i].setBaseDamage(tempBaseDamage);
+        }
+    }
+}
 
 
 
@@ -201,13 +272,17 @@ int main()
     NPC *CurrentNPCS[3];
     int NPC_NUM = 3;
 
-    CurrentNPCS[0] = new NPC("Jeff", {"human", "sword", 0.1}, 1);
+    /*CurrentNPCS[0] = new NPC("Jeff", {"human", "sword", 0.1}, 1);
     CurrentNPCS[1] = new NPC("Potato", {"pseudodragon", "psionics", 0.1}, 1);
     CurrentNPCS[2] = new NPC("OOLAJAHEASCA", {"kobold", "claws", 0.1}, 1);
+    */
 
-    Player player = newPlayer();
-
+    //Player player = newPlayer();
+    Player player = Player();
+    loadGame(player, *CurrentNPCS, NPC_NUM);
     Player *playerPtr = &player;
+
+    saveGame(playerPtr, CurrentNPCS, NPC_NUM);
 
     battle(playerPtr, CurrentNPCS, NPC_NUM);
     return 0;
