@@ -62,7 +62,7 @@ void loadGame(Player &player, NPC NPCS[3], int &NPC_NUM) {
 
     string line;
 
-    saveFile >> line;
+    getline(saveFile, line);
     if (line == "PLAYER") {
         getline(saveFile, tempName);
         getline(saveFile, tempRaceName);
@@ -272,17 +272,17 @@ int main()
     NPC *CurrentNPCS[3];
     int NPC_NUM = 3;
 
-    /*CurrentNPCS[0] = new NPC("Jeff", {"human", "sword", 0.1}, 1);
+    CurrentNPCS[0] = new NPC("Jeff", {"human", "sword", 0.1}, 1);
     CurrentNPCS[1] = new NPC("Potato", {"pseudodragon", "psionics", 0.1}, 1);
     CurrentNPCS[2] = new NPC("OOLAJAHEASCA", {"kobold", "claws", 0.1}, 1);
-    */
+
 
     //Player player = newPlayer();
     Player player = Player();
     loadGame(player, *CurrentNPCS, NPC_NUM);
     Player *playerPtr = &player;
 
-    saveGame(playerPtr, CurrentNPCS, NPC_NUM);
+    //saveGame(playerPtr, CurrentNPCS, NPC_NUM);
 
     battle(playerPtr, CurrentNPCS, NPC_NUM);
     return 0;
