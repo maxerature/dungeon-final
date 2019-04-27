@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <cstdlib>
 #include <ctime>
@@ -7,6 +8,34 @@
 #include "Enemy.h"
 
 using namespace std;
+
+void saveGame(Player *player, NPC *party[3], int NUM_NPC) {
+    fstream saveFile;
+    string saveName = "saveFile.txt";
+
+    saveFile.open(saveName);
+
+    saveFile << "PLAYER" << endl <<
+                player->getName() << endl <<
+                player->getRace().raceName << endl <<
+                player->getRace().raceModifier << endl <<
+                player->getRace().defaultWeapon << endl <<
+                player->getXPToLevel() << endl <<
+                player->getXP() << endl <<
+                player->getMaxHealth() << endl <<
+                player->getHealth() << endl <<
+                player->getLevel() << endl <<
+                player->getBaseDamage() << endl;
+    saveFile << "PARTY" << endl;
+    for (int i = 0; i < NUM_NPC; i++) {
+
+    }
+
+}
+
+
+
+
 
 template<typename offence, typename defence>
 double calculateDamage(offence offensive, defence defensive) {
@@ -38,6 +67,7 @@ void enemyDefeated(Player *player, Enemy *enemy) {
     player->setExperience(player->getExperience() +  enemy->getExperience());
     cout << endl << "You gain " << enemy->getExperience() << " EXP!" << endl;
 }
+
 
 void battle(Player *player, NPC *party[3], int NPC_NUM) {
     srand(time(0));
