@@ -1,13 +1,12 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "Character.h".
+#include "Character.h"
 
 class Enemy : public Character
 {
 public:
-    Enemy();
-
+    Enemy(Race race, int level);
 };
 
 #endif // ENEMY_H

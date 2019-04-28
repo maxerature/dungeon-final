@@ -9,11 +9,19 @@ using namespace std;
 class Player : public Character
 {
 public:
-    Player(string name, string race, string weapon, int health, int level);
-    
+    Player();
+    Player(string name, Race race, string weapon);
+    int getXP();
+    int getXPToLevel();
+    string getName();
+
+    void setXP(int experience);
+    void setXPToLevel(int XPToLevel);
+
 private:
     bool hasKey;
     string name;
+    int XPToLevel;
 };
 
 #endif // PLAYER_H

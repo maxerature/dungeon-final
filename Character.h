@@ -1,16 +1,16 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include <string>
+#include <global_functions.h>
 using namespace std;
 
 class Character
 {
 public:
     Character();
-    Character(string race, int maxHealth, double baseDamage, int level);
+    Character(Race race, int level);
     double getBaseDamage();
-    string getRace();
+    Race getRace();
     string getWeapon();
     int getLevel();
     int getMaxHealth();
@@ -22,7 +22,7 @@ public:
     void setMaxHealth(int);
     void setWeapon(string);
     void setExperience(int);
-
+    void setBaseDamage(double);
     void takeDamage(int);
 
     bool alive = true;
@@ -32,7 +32,7 @@ protected:
     int level;
     int experience;
     double baseDamage;
-    string race;
+    Race race;
     string weapon;
 
 };

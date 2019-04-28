@@ -1,6 +1,5 @@
 #include "Enemy.h"
 
-Enemy::Enemy()
+Enemy::Enemy(Race race, int level) : Character(race, level)
 {
-
 }
