@@ -1,8 +1,6 @@
-#include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
-#include <ctime>
 #include "Player.h"
 #include "NPC.h"
 #include "Enemy.h"
@@ -40,7 +38,7 @@ void saveGame(Player *player, NPC *party[3], int NUM_NPC) {
 
 }
 
-void loadGame(Player &player, NPC NPCS[3], int &NPC_NUM) {
+void loadGame(Player &player, NPC *NPCS[3], int &NPC_NUM) {
     ifstream saveFile;
     string saveName = "saveFile.txt";
 
@@ -67,13 +65,20 @@ void loadGame(Player &player, NPC NPCS[3], int &NPC_NUM) {
         getline(saveFile, tempName);
         getline(saveFile, tempRaceName);
         saveFile >> tempRaceMod;
+        getline(saveFile, line);  //Gets to new line
         getline(saveFile, tempRaceWeapon);
         saveFile >> tempXPToLevel;
+        getline(saveFile, line);
         saveFile >> tempXP;
+        getline(saveFile, line);
         saveFile >> tempMaxHealth;
+        getline(saveFile, line);
         saveFile >> tempHealth;
+        getline(saveFile, line);
         saveFile >> tempLevel;
+        getline(saveFile, line);
         saveFile >> tempBaseDamage;
+        getline(saveFile, line);
 
         player = Player(tempName,{tempRaceName, tempRaceWeapon, tempRaceMod}, tempRaceWeapon);
         player.setXPToLevel(tempXPToLevel);
@@ -87,20 +92,26 @@ void loadGame(Player &player, NPC NPCS[3], int &NPC_NUM) {
     saveFile >> line;
     if (line == "PARTY") {
         saveFile >> NPC_NUM;
+        getline(saveFile, line);
         for (int i = 0; i < NPC_NUM; i++) {
             getline(saveFile, tempName);
             getline(saveFile, tempRaceName);
             saveFile >> tempRaceMod;
+            getline(saveFile, line);
             getline(saveFile, tempRaceWeapon);
             saveFile >> tempMaxHealth;
+            getline(saveFile, line);
             saveFile >> tempHealth;
+            getline(saveFile, line);
             saveFile >> tempLevel;
+            getline(saveFile, line);
             saveFile >> tempBaseDamage;
+            getline(saveFile, line);
 
-            NPCS[i] = NPC(tempName, {tempRaceName, tempRaceWeapon, tempRaceMod}, tempLevel);
-            NPCS[i].setHealth(tempHealth);
-            NPCS[i].setMaxHealth(tempMaxHealth);
-            NPCS[i].setBaseDamage(tempBaseDamage);
+            NPCS[i] = new NPC(tempName, {tempRaceName, tempRaceWeapon, tempRaceMod}, tempLevel);
+            NPCS[i]->setHealth(tempHealth);
+            NPCS[i]->setMaxHealth(tempMaxHealth);
+            NPCS[i]->setBaseDamage(tempBaseDamage);
         }
     }
 }
@@ -110,7 +121,6 @@ void loadGame(Player &player, NPC NPCS[3], int &NPC_NUM) {
 
 template<typename offence, typename defence>
 double calculateDamage(offence offensive, defence defensive) {
-    srand(time(0));
     double randValue = (((double) rand() / (RAND_MAX)) + 1) * 20;
     double damage = (randValue * offensive->getLevel() * offensive->getBaseDamage()/100 * offensive->getRace().raceModifier) /(defensive->getRace().raceModifier);
     return damage;
@@ -120,7 +130,6 @@ Player newPlayer() {
     string name;
     Race race;
     string weapon;
-    int health;
     cout << "What is your name? ";
     getline(cin, name);
     cout << "What is your race? ";
@@ -134,28 +143,76 @@ Player newPlayer() {
     return player;
 }
 
-void enemyDefeated(Player *player, Enemy *enemy) {
+void enemyDefeated(Player *player, Enemy *enemy, NPC *NPCS[3], int &NPC_NUM) {
     player->setExperience(player->getExperience() +  enemy->getExperience());
     cout << endl << "You gain " << enemy->getExperience() << " EXP!" << endl;
+
+    if (player->getXP() > player->getXPToLevel()) {
+        player->levelUp();
+    }
+
+
+    int joinChance;
+
+    joinChance = (3 - NPC_NUM) * (rand() % 100 + 1);
+    if (joinChance >= 75) {
+        NPCS[NPC_NUM] = new NPC(enemy);
+        NPC_NUM++;
+    }
+    delete enemy;
+}
+
+template <typename allyType>
+void allyDamaged(allyType *ally, Enemy *enemy, string type, NPC *party[3], int &NPC_NUM, int selection) {
+    double damage = calculateDamage(enemy, ally);
+    double damagedHealth = ally->getHealth();
+    damagedHealth -= damage;
+    ally->setHealth(damagedHealth);
+
+    cout << "The " << enemy->getRace().raceName << " did " << damage << " damage to " << ally->getName() << " with their " << enemy->getRace().defaultWeapon << "!" << endl;
+
+    if (damagedHealth <= 0) {
+        if (type == "player") {
+        cout << endl << "You have been killed.  Game over.  Press enter to exit" << endl;
+        cin.ignore();
+        exit(0);
+        }
+        else if (type == "NPC") {
+            cout << endl << party[selection]->getName() << " has been critically injured!  They choose to stay behind to heal up." << endl << "They may come back later." << endl;
+            for (int i = selection; i< NPC_NUM; i++) {
+                party[i] = party[i+1];
+            }
+            NPC_NUM--;
+        }
+    }
 }
 
 
-void battle(Player *player, NPC *party[3], int NPC_NUM) {
-    srand(time(0));
-    int enemyCount = rand() % 4 + 1;
+
+void battle(Player *player, NPC *party[3], int &NPC_NUM) {
+    int enemyCount;
+    if (player->getLevel() == 1) {
+        enemyCount = rand() % 2 + 1;
+    }
+    else if (player->getLevel() == 2) {
+        enemyCount = rand() % 3 + 1;
+    }
+    else {
+        enemyCount = rand() % 4 + 1;
+    }
     int selection;
     double damage;
     double damagedHealth;
     Enemy *enemies[4] = {};
     for (int i = 0; i< enemyCount; i++) {
-        enemies[i] = new Enemy({"kobold", "claws", 1}, 1);
+        enemies[i] = new Enemy(generateRace(14), player->getLevel());
     }
     while (true) {
         //bATTLE hAPPENS
 
         //Player always goes first
 
-        cout << player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
+        cout << endl << endl << endl << player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
         for (int i = 0; i < NPC_NUM; i++) {
             cout << party[i]->getName() << "[" << party[i]->getHealth() << "/" << party[i]->getMaxHealth() << "]        ";
             if (i == 0) cout << endl;
@@ -168,16 +225,15 @@ void battle(Player *player, NPC *party[3], int NPC_NUM) {
         cout << endl << "Choose which enemy to attack: ";
         cin >> selection;
 
-        cout << endl << endl << endl;
 
         damage = calculateDamage(player, enemies[selection]);
         damagedHealth = enemies[selection]->getHealth();
         damagedHealth -= damage;
         enemies[selection]->setHealth(damagedHealth);
-        cout << endl << endl << "You did " << fixed << setprecision(3) << damage << " damage to the " << enemies[selection]->getRace().raceName << " with your " << player->getWeapon() << "!" << endl;
+        cout << endl << endl << "You did " << fixed << setprecision(3) << damage << " damage to the " << enemies[selection]->getRace().raceName << " with your " << player->getRace().defaultWeapon << "!" << endl;
         if (damagedHealth <= 0) {
             cout << endl << "You have killed the " << enemies[selection]->getRace().raceName << "!" << endl;
-            enemyDefeated(player, enemies[selection]);
+            enemyDefeated(player, enemies[selection], party, NPC_NUM);
 
             for (int i = selection; i< enemyCount; i++) {
                 enemies[i] = enemies[i+1];
@@ -186,7 +242,9 @@ void battle(Player *player, NPC *party[3], int NPC_NUM) {
         }
 
         if (enemyCount == 0) {
-            cout << endl << endl << "All enemies are dead!  You win!" << endl;
+            cout << endl << endl << "All enemies are dead!  You win!" << endl <<
+                    "Experience: [" << player->getXP() << "/" << player->getXPToLevel() << "]" <<
+                    endl << endl << endl;
             return;
         }
 
@@ -201,7 +259,7 @@ void battle(Player *player, NPC *party[3], int NPC_NUM) {
             cout << endl << party[i]->getName() << " did " << damage << " damage to the " << enemies[selection]->getRace().raceName << " with their " << party[i]->getRace().defaultWeapon << "!" << endl;
             if (damagedHealth <= 0) {
                 cout << endl << "You have killed the " << enemies[selection]->getRace().raceName << "!" << endl;
-                enemyDefeated(player, enemies[selection]);
+                enemyDefeated(player, enemies[selection], party, NPC_NUM);
 
                 for (int i = selection; i< enemyCount; i++) {
                     enemies[i] = enemies[i+1];
@@ -209,7 +267,9 @@ void battle(Player *player, NPC *party[3], int NPC_NUM) {
                 enemyCount--;
             }
             if (enemyCount == 0) {
-                cout << endl << endl << "All enemies are dead!  You win!" << endl;
+                cout << endl << endl << "All enemies are dead!  You win!" << endl <<
+                        "Experience: [" << player->getXP() << "/" << player->getXPToLevel() << "]" <<
+                        endl << endl << endl;
                 return;
             }
         }
@@ -217,50 +277,17 @@ void battle(Player *player, NPC *party[3], int NPC_NUM) {
         // Enemy turns
 
         for (int i = 0; i < enemyCount; i++) {
+            if (NPC_NUM == 0) {
+                allyDamaged(player, enemies[i], "player", party, NPC_NUM, -1);
+            }
             if (NPC_NUM > 0) {
-                selection = rand() % (NPC_NUM);
+                selection = rand() % (NPC_NUM+1);
                 if (selection != (NPC_NUM)) {
-                    damage = calculateDamage(enemies[i], party[selection]);
-                    damagedHealth = party[selection]->getHealth();
-                    damagedHealth -= damage;
-                    party[selection]->setHealth(damagedHealth);
-
-                    cout << "The " << enemies[i]->getRace().raceName << " did " << damage << " damage to " << party[selection]->getName() << " with their " << enemies[i]->getRace().defaultWeapon << "!" << endl;
-
-                    if (damagedHealth <= 0) {
-                        cout << endl << party[selection]->getName() << " has been critically injured!  They choose to stay behind to heal up." << endl << "They may come back later." << endl;
-                        for (int i = selection; i< NPC_NUM; i++) {
-                            party[i] = party[i+1];
-                        }
-                        NPC_NUM--;
-                    }
+                    allyDamaged(party[selection], enemies[i], "NPC", party, NPC_NUM, selection);
                 }
                 else if (selection == NPC_NUM) {
-                    damage = calculateDamage(enemies[i], player);
-                    damagedHealth = player->getHealth();
-                    damagedHealth -= damage;
-                    player->setHealth(damagedHealth);
-
-                    cout << "The " << enemies[i]->getRace().raceName << " did " << damage << " damage to " << player->getName() << " with their " << enemies[i]->getRace().defaultWeapon << "!" << endl;
-
-                    if (damagedHealth <= 0) {
-                        cout << endl << "You have been killed.  Game over.  Press enter to exit" << endl;
-                        cin.ignore();
-                        exit(0);
-                    }
+                    allyDamaged(player, enemies[i], "player", party, NPC_NUM, -1);
                 }
-            }
-            damage = calculateDamage(enemies[i], player);
-            damagedHealth = player->getHealth();
-            damagedHealth -= damage;
-            player->setHealth(damagedHealth);
-
-            cout << "The " << enemies[i]->getRace().raceName << " did " << damage << " damage to " << player->getName() << " with their " << enemies[i]->getRace().defaultWeapon << "!" << endl;
-
-            if (damagedHealth <= 0) {
-                cout << endl << "You have been killed.  Game over.  Press enter to exit" << endl;
-                cin.ignore();
-                exit(0);
             }
         }
     }
@@ -269,23 +296,17 @@ void battle(Player *player, NPC *party[3], int NPC_NUM) {
 
 int main()
 {
+    srand(time(0));
     NPC *CurrentNPCS[3];
-    int NPC_NUM = 3;
+    int NPC_NUM = 0;
 
-    CurrentNPCS[0] = new NPC("Jeff", {"human", "sword", 0.1}, 1);
-    CurrentNPCS[1] = new NPC("Potato", {"pseudodragon", "psionics", 0.1}, 1);
-    CurrentNPCS[2] = new NPC("OOLAJAHEASCA", {"kobold", "claws", 0.1}, 1);
-
-
-    //Player player = newPlayer();
-    Player player = Player();
-    loadGame(player, *CurrentNPCS, NPC_NUM);
+    Player player = newPlayer();
+    //Player player = Player();
+    //loadGame(player, CurrentNPCS, NPC_NUM);
     Player *playerPtr = &player;
+    while(true) {
+        battle(playerPtr, CurrentNPCS, NPC_NUM);
+    }
 
-    //saveGame(playerPtr, CurrentNPCS, NPC_NUM);
-
-    battle(playerPtr, CurrentNPCS, NPC_NUM);
     return 0;
 }
-
-
