@@ -45,3 +45,10 @@ Race generateRace(int maxRace)
 
     return races[raceNum];
 }
+
+Race generateBossRace(int maxRace)
+{
+	int raceNum = rand() % maxRace + 14;
+
+	return races[raceNum];
+}

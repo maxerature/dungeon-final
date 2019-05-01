@@ -198,10 +198,19 @@ void battle(Player *player, NPC *party[3], int &NPC_NUM) {
     int selection;
     double damage;
     double damagedHealth;
-    Enemy *enemies[4] = {};
-    for (int i = 0; i< enemyCount; i++) {
-        enemies[i] = new Enemy(generateRace(14), player->getLevel());
-    }
+	Enemy *enemies[4] = {};
+	if (player->getHasKey())
+	{
+		for (int i = 0; i < enemyCount; i++) {
+			enemies[i] = new Enemy(generateBossRace(7), player->getLevel());
+		}
+	}
+	else
+	{
+		for (int i = 0; i < enemyCount; i++) {
+			enemies[i] = new Enemy(generateRace(14), player->getLevel());
+		}
+	}
     while (true) {
         //bATTLE hAPPENS
 
@@ -335,6 +344,10 @@ void tellStory() {
             "Another elder chimes in \"And be quick, for many will die in the time" << endl <<
             "it takes to retrieve the cure!  Go, and save as many of us as you can!" << endl << endl << endl << endl;
 }
+void endGame()
+{
+	cout << "You now have the key and can escape the dungeon. However, powerful monsters are aware and are blocking the exit." << endl << "There are no other exits so you must defeat them!";
+}
 
 int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
     int survivors = 10000;
@@ -348,6 +361,10 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
                     cout << NPCS[i]->getName() << "[" << NPCS[i]->getHealth() << "/" << NPCS[i]->getMaxHealth() << "]        ";
                     if (i == 0) cout << endl;
                 }
+	    if (player->getHasKey())
+		{
+			endGame();
+		}
 	
         cout << endl << endl <<
                 "Will you:" << endl <<
@@ -371,6 +388,13 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
             exit(0);
             break;
         }
+
+		if (player->getHasKey())
+		{
+			cout << "You saved " << survivors << "people in your town! Congratulations!";
+			cin.ignore();
+			exit(0);
+		}
         cout << endl << endl << endl << "There are " << survivors << " survivors in your town!";
         if (survivors > 5000) cout << endl << "You had better hurry!" << endl;
         else if (survivors > 2500) cout << endl << "You wonder how your family is." << endl;

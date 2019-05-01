@@ -16,6 +16,7 @@ public:
     int getXP();
     int getXPToLevel();
     string getName();
+	bool getHasKey();
 
     void setXP(int experience);
     void setXPToLevel(int XPToLevel);
