@@ -3,6 +3,8 @@
 
 #include <string>
 #include <iostream>
+#include <ctime>
+
 using namespace std;
 
 struct Race {
@@ -11,6 +13,11 @@ struct Race {
     double raceModifier;
 };
 
+
+
+
+
 Race chooseRace();
+Race generateRace(int maxRace);
 
 #endif // GLOBAL_FUNCTIONS_H

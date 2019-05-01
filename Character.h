@@ -11,7 +11,6 @@ public:
     Character(Race race, int level);
     double getBaseDamage();
     Race getRace();
-    string getWeapon();
     int getLevel();
     int getMaxHealth();
     double getHealth();
@@ -20,7 +19,6 @@ public:
     void setLevel(int);
     void setHealth(double);
     void setMaxHealth(int);
-    void setWeapon(string);
     void setExperience(int);
     void setBaseDamage(double);
     void takeDamage(int);
@@ -33,7 +31,6 @@ protected:
     int experience;
     double baseDamage;
     Race race;
-    string weapon;
 
 };
 

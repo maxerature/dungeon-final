@@ -4,6 +4,7 @@
 #include "Character.h"
 
 #include <string>
+
 using namespace std;
 
 class Player : public Character
@@ -17,6 +18,8 @@ public:
 
     void setXP(int experience);
     void setXPToLevel(int XPToLevel);
+
+    void levelUp();
 
 private:
     bool hasKey;
