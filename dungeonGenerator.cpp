@@ -87,16 +87,25 @@ void Dungeon::movePos(int direction)
 {
     switch (direction) {
     case 0:
-        playerPos.y_pos++;
+        if(dungeon[playerPos.y_pos + 1][playerPos.x_pos] != dungeon[0][0]) {
+            playerPos.y_pos++;
+        }
         break;
     case 1:
-        playerPos.y_pos--;
+        if(dungeon[playerPos.y_pos- 1][playerPos.x_pos] != dungeon[0][0]) {
+            playerPos.y_pos--;
+        }
         break;
     case 2:
-        playerPos.x_pos--;
+        if(dungeon[playerPos.y_pos][playerPos.x_pos - 1] != dungeon[0][0]) {
+            playerPos.x_pos--;
+        }
         break;
     case 3:
-        playerPos.x_pos++;
+        if(dungeon[playerPos.y_pos][playerPos.x_pos + 1] != dungeon[0][0]) {
+            playerPos.x_pos++;
+        }
+        break;
     }
 
     if (playerPos == exitPos) {
@@ -105,7 +114,7 @@ void Dungeon::movePos(int direction)
     }
 }
 
-void Dungeon::Print()
+void Dungeon::Print(Player *player, NPC *NPCS[3], int &NPC_NUM)
 {
     for(int i = 0; i < 27; i++) {
         for (int j = 0; j < 27; j++) {
@@ -115,6 +124,41 @@ void Dungeon::Print()
             else {
                 cout << dungeon[i][j];
             }
+        }
+        if(i == 0) {
+            cout << "           " << player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
+            if (NPC_NUM >= 1) {
+                cout << "           " << NPCS[0]->getName() << "[" << NPCS[0]->getHealth() << "/" << NPCS[0]->getMaxHealth() << "]        ";
+            }
+        }
+        if (i == 1) {
+            if (NPC_NUM >= 2) {
+                cout << "           " << NPCS[1]->getName() << "[" << NPCS[1]->getHealth() << "/" << NPCS[1]->getMaxHealth() << "]        ";
+            }
+            if (NPC_NUM >= 3) {
+                cout << "           " << NPCS[2]->getName() << "[" << NPCS[2]->getHealth() << "/" << NPCS[2]->getMaxHealth() << "]        ";
+            }
+        }
+        if (i == 3) {
+            cout << "           --INSTRUCTIONS--";
+        }
+        if (i == 4) {
+            cout << "           [ARROW KEYS]: Move";
+        }
+        if (i == 5) {
+            cout << "           [ENTER]: Rest";
+        }
+        if (i == 6) {
+            cout << "           [ESCAPE]: Save and quit";
+        }
+        if (i == 7) {
+            cout << "           " << (char)239 << " = Stairs to next floor";
+        }
+        if (i == 8) {
+            cout << "           @ = Player";
+        }
+        if (i == 9) {
+            cout << "           " << char(157) << " = Key Fragment";
         }
         cout << endl;
     }

@@ -24,14 +24,14 @@ Race races[20] = {
 };
 
 Race chooseRace() {
-    string chosenRace;
+    int chosenRace;
+    for (int i = 0; i < 8; i++) {
+        cout << "[" << i << "]: " << races[i].raceName << endl;
+    }
     while (true) {
-        getline(cin, chosenRace);
-
-        for(int i = 0; i < 8; i++) {
-            if(races[i].raceName == chosenRace) {
-                return races[i];
-            }
+        cin >> chosenRace;
+        if (chosenRace >=0 && chosenRace <= 7) {
+            return races[chosenRace];
         }
         cout << "Chosen race is unavailable.  Please try again." << endl;
     }
@@ -41,5 +41,11 @@ Race generateRace(int maxRace)
 {
     int raceNum = rand() % maxRace;
 
+    return races[raceNum];
+}
+
+Race generateBossRace(int maxRace)
+{
+    int raceNum = rand() % maxRace + 14;
     return races[raceNum];
 }

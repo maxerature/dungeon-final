@@ -2,6 +2,8 @@
 #define DUNGEONGENERATOR_H
 
 #include "global_functions.h"
+#include "Player.h"
+#include "NPC.h"
 
 struct ItemPos {
     int x_pos;
@@ -14,7 +16,7 @@ struct Dungeon {
     ItemPos playerPos;
     ItemPos exitPos;
 
-    void Print();
+    void Print(Player *player, NPC *NPCS[3], int &NPC_NUM);
     void generateDungeon();
     void movePos(int direction);
 };

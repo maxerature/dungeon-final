@@ -20,6 +20,7 @@ public:
     void setXPToLevel(int XPToLevel);
 
     void levelUp();
+    bool getHasKey();
 
 private:
     bool hasKey;

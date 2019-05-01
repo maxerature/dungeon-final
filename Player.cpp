@@ -74,6 +74,11 @@ void Player::levelUp()
     srand(time(0));
     choice = level + (rand() % 10);
     if (choice >= 12) {
-        hasKey = 1;
+        hasKey = true;
     }
+}
+
+bool Player::getHasKey()
+{
+    return hasKey;
 }

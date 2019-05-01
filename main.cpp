@@ -2,8 +2,6 @@
 #include <iomanip>
 #include <cstdlib>
 #include <conio.h>
-#include "Player.h"
-#include "NPC.h"
 #include "Enemy.h"
 #include "dungeonGenerator.h"
 
@@ -137,10 +135,12 @@ Player newPlayer() {
     string name;
     Race race;
     string weapon;
+    cin.ignore();
     cout << "What is your name? ";
     getline(cin, name);
-    cout << "What is your race? ";
+    cout << "What is your race? " << endl;
     race = chooseRace();
+    cin.ignore();
     cout << endl << "What is your weapon of choice? ";
     getline(cin, weapon);
 
@@ -185,7 +185,7 @@ void allyDamaged(allyType *ally, Enemy *enemy, string type, NPC *party[3], int &
         exit(0);
         }
         else if (type == "NPC") {
-            cout << endl << party[selection]->getName() << " has been critically injured!  They choose to stay behind to heal up." << endl << "They may come back later." << endl;
+            cout << endl << party[selection]->getName() << " has been critically injured!  They choose to stay behind to heal up." << endl;
             for (int i = selection; i< NPC_NUM; i++) {
                 party[i] = party[i+1];
             }
@@ -209,8 +209,16 @@ void battle(Player *player, NPC *party[3], int &NPC_NUM) {
     double damage;
     double damagedHealth;
     Enemy *enemies[4] = {};
-    for (int i = 0; i< enemyCount; i++) {
-        enemies[i] = new Enemy(generateRace(14), player->getLevel());
+    if (player->getHasKey()) {
+        enemyCount = 2;
+        for (int i = 0; i < enemyCount; i++) {
+            enemies[i] = new Enemy(generateRace(14), player->getLevel());
+        }
+    }
+    else {
+        for (int i = 0; i< enemyCount; i++) {
+            enemies[i] = new Enemy(generateRace(14), player->getLevel());
+        }
     }
     while (true) {
         //bATTLE hAPPENS
@@ -346,6 +354,11 @@ void tellStory() {
             "it takes to retrieve the cure!  Go, and save as many of us as you can!" << endl << endl << endl << endl;
 }
 
+void endGame() {
+    cout << "You have retreived the cure for your village.  However, powerful monsters aer blocking the exit." << endl <<
+            "Defeat them to save your village!";
+}
+
 int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
     int survivors = 10000;
     bool truth = true;
@@ -353,23 +366,26 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
     int count;
     cout << "Your Town has 10,000 People alive.  You must try to save as many as possible, by being as quick as possible." << endl << endl;
     while (true) {
-        fungeon.Print();
+        fungeon.Print(player, NPCS, NPC_NUM);
 
         truth = true;
-        cout << endl << endl <<
+        /*cout << endl << endl <<
                 player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
                 for (int i = 0; i < NPC_NUM; i++) {
                     cout << NPCS[i]->getName() << "[" << NPCS[i]->getHealth() << "/" << NPCS[i]->getMaxHealth() << "]        ";
                     if (i == 0) cout << endl;
-                }
+                }*/
+        if (player->getHasKey()) {
+            endGame();
+        }
 
-        cout << endl << endl <<
+        /*cout << endl << endl <<
                 "Will you:" << endl <<
                 "[Arrow Keys]: Move" << endl <<
                 "[Enter]: Rest" << endl <<
-                "[Escape]: Save and Quit" << endl;
+                "[Escape]: Save and Quit" << endl;*/
 
-        switch((selection=getch())) {
+        switch((selection=_getch())) {
         case KEY_UP:
             fungeon.movePos(1);
             selection = rand() % 100 + 1;
@@ -409,6 +425,11 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
             exit(0);
             break;
         }
+        if (player->getHasKey()) {
+            cout << "You saved " << survivors << "Villagers!  You are driven from your town for your inability to save their loved ones.";
+            cin.ignore();
+            exit(0);
+        }
         cout << endl << endl << endl << "There are " << survivors << " survivors in your town!";
         if (survivors > 5000) cout << endl << "You had better hurry!" << endl;
         else if (survivors > 2500) cout << endl << "You wonder how your family is." << endl;
@@ -435,6 +456,8 @@ int main()
 {
     srand(time(0));
 
+    int selection;
+
     Dungeon fungeon;
     fungeon.generateDungeon();
     //fungeon.Print();
@@ -446,9 +469,20 @@ int main()
     NPC *CurrentNPCS[3];
     int NPC_NUM = 0;
 
-    Player player = newPlayer();
-    //Player player = Player();
-    //loadGame(player, CurrentNPCS, NPC_NUM);
+    cout << "[0]: NEW GAME" << endl << "[1]: LOAD" << endl;
+    cin >> selection;
+
+
+    Player player;
+    switch (selection) {
+    case 0:
+        player = newPlayer();
+        break;
+    case 1:
+        player = Player();
+        loadGame(player, CurrentNPCS, NPC_NUM);
+        break;
+    }
     Player *playerPtr = &player;
     gameLoop(playerPtr, CurrentNPCS, NPC_NUM, fungeon);
 

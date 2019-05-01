@@ -13,7 +13,8 @@ NPC::NPC(Enemy *Copied) : Character(Copied->getRace(), Copied->getLevel())
     cout << endl << endl <<
             "A defeated monster would like to join you!" << endl <<
             "It needs a name.  What will you name it? ";
-    cin >> tempName;
+    cin.ignore();
+    getline(cin,tempName);
 
     this->name = tempName;
 

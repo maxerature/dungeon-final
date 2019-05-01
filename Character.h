@@ -1,7 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include <global_functions.h>
+#include "global_functions.h"
 using namespace std;
 
 class Character

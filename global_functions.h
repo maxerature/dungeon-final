@@ -14,10 +14,9 @@ struct Race {
 };
 
 
-
-
-
 Race chooseRace();
 Race generateRace(int maxRace);
+Race generateBossRace(int maxRace);
+
 
 #endif // GLOBAL_FUNCTIONS_H
