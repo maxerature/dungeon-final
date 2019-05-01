@@ -367,7 +367,7 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
                 "Will you:" << endl <<
                 "[Arrow Keys]: Move" << endl <<
                 "[Enter]: Rest" << endl <<
-                "[2]: Save and Quit" << endl;
+                "[Escape]: Save and Quit" << endl;
 
         switch((selection=getch())) {
         case KEY_UP:
