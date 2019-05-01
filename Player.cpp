@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include <iostream>
 
 Player::Player() :Character({"", "", 0}, 0)
 {
@@ -74,6 +74,6 @@ void Player::levelUp()
     srand(time(0));
     choice = level + (rand() % 10);
     if (choice >= 12) {
-        hasKey = 1;
+        hasKey = true;
     }
 }

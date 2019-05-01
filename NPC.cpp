@@ -1,5 +1,5 @@
 #include "NPC.h"
-
+#include <iostream>
 
 NPC::NPC(string name, Race race, int level) : Character(race, level)
 {

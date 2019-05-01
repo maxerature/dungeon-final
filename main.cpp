@@ -129,10 +129,10 @@ Player newPlayer() {
     string weapon;
     cout << "What is your name? ";
     getline(cin, name);
-    cout << "What is your race? ";
+    cout << "What is your race? " << endl;
     race = chooseRace();
     cout << endl << "What is your weapon of choice? ";
-    getline(cin, weapon);
+	getline(cin, weapon);
 
     Player player = Player(name, race, weapon);
 
@@ -348,7 +348,7 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
                     cout << NPCS[i]->getName() << "[" << NPCS[i]->getHealth() << "/" << NPCS[i]->getMaxHealth() << "]        ";
                     if (i == 0) cout << endl;
                 }
-
+	
         cout << endl << endl <<
                 "Will you:" << endl <<
                 "[0]: Keep going" << endl <<

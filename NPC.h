@@ -1,6 +1,7 @@
 #ifndef NPC_H
 #define NPC_H
 
+#include <string>
 #include "Character.h"
 #include "Enemy.h"
 

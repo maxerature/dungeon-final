@@ -4,6 +4,7 @@
 #include "Character.h"
 
 #include <string>
+#include <time.h>
 
 using namespace std;
 
