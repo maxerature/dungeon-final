@@ -1,11 +1,21 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
+#include <conio.h>
 #include "Player.h"
 #include "NPC.h"
 #include "Enemy.h"
+#include "dungeonGenerator.h"
 
 using namespace std;
+
+#define KEY_UP 72
+#define KEY_DOWN 80
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+#define ENTER 13
+#define ESC 27
+
 
 void saveGame(Player *player, NPC *party[3], int NPC_NUM) {
     ofstream saveFile;
@@ -336,12 +346,16 @@ void tellStory() {
             "it takes to retrieve the cure!  Go, and save as many of us as you can!" << endl << endl << endl << endl;
 }
 
-int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
+int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
     int survivors = 10000;
+    bool truth = true;
     int selection;
     int count;
     cout << "Your Town has 10,000 People alive.  You must try to save as many as possible, by being as quick as possible." << endl << endl;
     while (true) {
+        fungeon.Print();
+
+        truth = true;
         cout << endl << endl <<
                 player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
                 for (int i = 0; i < NPC_NUM; i++) {
@@ -351,20 +365,44 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
 
         cout << endl << endl <<
                 "Will you:" << endl <<
-                "[0]: Keep going" << endl <<
-                "[1]: Rest" << endl <<
+                "[Arrow Keys]: Move" << endl <<
+                "[Enter]: Rest" << endl <<
                 "[2]: Save and Quit" << endl;
-        cin >> selection;
 
-        switch (selection) {
-        case 0:
-            cout << "You move forwards" << endl << endl << "Enemies ambush you!" << endl << endl;
-            battle(player, NPCS, NPC_NUM);
+        switch((selection=getch())) {
+        case KEY_UP:
+            fungeon.movePos(1);
+            selection = rand() % 100 + 1;
+            if (selection >= 85) {
+                cout << endl << "An enemy attacks!" << endl << endl;
+                battle(player, NPCS, NPC_NUM);
+            }
             break;
-        case 1:
+        case KEY_DOWN:
+            fungeon.movePos(0);
+            if (selection >= 85) {
+                cout << endl << "An enemy attacks!" << endl << endl;
+                battle(player, NPCS, NPC_NUM);
+            }
+            break;
+        case KEY_LEFT:
+            fungeon.movePos(2);
+            if (selection >= 85) {
+                cout << endl << "An enemy attacks!" << endl << endl;
+                battle(player, NPCS, NPC_NUM);
+            }
+            break;
+        case KEY_RIGHT:
+            fungeon.movePos(3);
+            if (selection >= 85) {
+                cout << endl << "An enemy attacks!" << endl << endl;
+                battle(player, NPCS, NPC_NUM);
+            }
+            break;
+        case ENTER:
             wait(player, NPCS, NPC_NUM, survivors);
             break;
-        case 2:
+        case ESC:
             saveGame(player, NPCS, NPC_NUM);
             cout << "Game saved." << endl << endl << "Press any key to exit.";
             cin.ignore();
@@ -395,8 +433,16 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
 
 int main()
 {
-    tellStory();
     srand(time(0));
+
+    Dungeon fungeon;
+    fungeon.generateDungeon();
+    //fungeon.Print();
+    //cin.ignore();
+    //fungeon.movePos(0);
+    //fungeon.Print();
+    tellStory();
+
     NPC *CurrentNPCS[3];
     int NPC_NUM = 0;
 
@@ -404,10 +450,7 @@ int main()
     //Player player = Player();
     //loadGame(player, CurrentNPCS, NPC_NUM);
     Player *playerPtr = &player;
-    gameLoop(playerPtr, CurrentNPCS, NPC_NUM);
-    while(true) {
-        battle(playerPtr, CurrentNPCS, NPC_NUM);
-    }
+    gameLoop(playerPtr, CurrentNPCS, NPC_NUM, fungeon);
 
     return 0;
 }
