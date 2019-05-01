@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void saveGame(Player *player, NPC *party[3], int NUM_NPC) {
+void saveGame(Player *player, NPC *party[3], int NPC_NUM) {
     ofstream saveFile;
     string saveName = "saveFile.txt";
 
@@ -24,8 +24,8 @@ void saveGame(Player *player, NPC *party[3], int NUM_NPC) {
                 player->getHealth() << endl <<
                 player->getLevel() << endl <<
                 player->getBaseDamage() << endl;
-    saveFile << "PARTY" << endl << NUM_NPC << endl;
-    for (int i = 0; i < NUM_NPC; i++) {
+    saveFile << "PARTY" << endl << NPC_NUM << endl;
+    for (int i = 0; i < NPC_NUM; i++) {
         saveFile << party[i]->getName() << endl <<
                     party[i]->getRace().raceName << endl <<
                     party[i]->getRace().raceModifier << endl <<
@@ -116,9 +116,6 @@ void loadGame(Player &player, NPC *NPCS[3], int &NPC_NUM) {
     }
 }
 
-
-
-
 template<typename offence, typename defence>
 double calculateDamage(offence offensive, defence defensive) {
     double randValue = (((double) rand() / (RAND_MAX)) + 1) * 20;
@@ -187,8 +184,6 @@ void allyDamaged(allyType *ally, Enemy *enemy, string type, NPC *party[3], int &
     }
 }
 
-
-
 void battle(Player *player, NPC *party[3], int &NPC_NUM) {
     int enemyCount;
     if (player->getLevel() == 1) {
@@ -256,7 +251,7 @@ void battle(Player *player, NPC *party[3], int &NPC_NUM) {
             damagedHealth = enemies[selection]->getHealth();
             damagedHealth -= damage;
             enemies[selection]->setHealth(damagedHealth);
-            cout << endl << party[i]->getName() << " did " << damage << " damage to the " << enemies[selection]->getRace().raceName << " with their " << party[i]->getRace().defaultWeapon << "!" << endl;
+            cout << party[i]->getName() << " did " << damage << " damage to the " << enemies[selection]->getRace().raceName << " with their " << party[i]->getRace().defaultWeapon << "!" << endl;
             if (damagedHealth <= 0) {
                 cout << endl << "You have killed the " << enemies[selection]->getRace().raceName << "!" << endl;
                 enemyDefeated(player, enemies[selection], party, NPC_NUM);
@@ -273,7 +268,7 @@ void battle(Player *player, NPC *party[3], int &NPC_NUM) {
                 return;
             }
         }
-
+        cout << endl;
         // Enemy turns
 
         for (int i = 0; i < enemyCount; i++) {
@@ -293,9 +288,114 @@ void battle(Player *player, NPC *party[3], int &NPC_NUM) {
     }
 }
 
+void wait(Player *player, NPC *party[3], int NPC_NUM, int &survivors) {
+    int hours;
+    double addHealth;
+    cout << endl << endl << "You choose to rest and tend to your wounds." << endl <<
+            "How long will you choose to rest?" << endl <<
+            "[Enter how many hours to rest]: ";
+    cin >> hours;
+
+    addHealth = (hours * player->getMaxHealth()) / 100;
+    player->setHealth(player->getHealth()+ addHealth);
+    if (player->getHealth() > player->getMaxHealth()) {
+        player->setHealth(player->getMaxHealth());
+    }
+    for (int i = 0; i < NPC_NUM; i++) {
+        addHealth = (hours * party[i]->getMaxHealth()) / 100;
+        party[i]->setHealth(party[i]->getHealth()+ addHealth);
+        if (party[i]->getHealth() > party[i]->getMaxHealth()) {
+            party[i]->setHealth(party[i]->getMaxHealth());
+        }
+    }
+    if (hours > 1) {
+        survivors -= (((rand() % (hours/2)+1)) * survivors) / 100;
+    }
+    else {
+        survivors -= survivors / 100;
+    }
+}
+
+void tellStory() {
+    cout << "The Wheel of Time turns, and Ages come and pass," << endl <<
+            "leaving memories that become legend. Legend fades to myth," << endl <<
+            "and even myth is long forgotten when the Age that gave it birth comes again." << endl << endl <<
+            "In one age, called the Seventh Age by some, an Age yet to come, an Age long past," << endl <<
+            "a wind rose in the mountains of Mordenkainen.  The wind was not the beginning." << endl <<
+            "There are neither beginnings nor endings to the turning of the Wheel of Time." << endl <<
+            "But it was ~a~ beginning." << endl << endl <<
+            "Born in the lands of the lord who gave the mountains their name, the wind " << endl <<
+            "blew west, across the Serpent Hills, once thought to be the corpse of a long dead" << endl <<
+            "monster, through the dense woods of the Far Forest, and eventually into the" << endl <<
+            "window of an old, seldom used inn's common room.  There, many men, all elders" << endl <<
+            "above the age of 200, were gathered around an unlikely person." << endl << endl <<
+            "\"Go!\" the eldest says, \"This plague will spell our doom, would you be" << endl <<
+            "unable to retrieve it's cure.  You must go to the ruins of the Cursed City Riverhelm" << endl <<
+            "and brave it's depths, for our town shall surely die otherwise.\n" << endl << endl <<
+            "Another elder chimes in \"And be quick, for many will die in the time" << endl <<
+            "it takes to retrieve the cure!  Go, and save as many of us as you can!" << endl << endl << endl << endl;
+}
+
+int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM) {
+    int survivors = 10000;
+    int selection;
+    int count;
+    cout << "Your Town has 10,000 People alive.  You must try to save as many as possible, by being as quick as possible." << endl << endl;
+    while (true) {
+        cout << endl << endl <<
+                player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
+                for (int i = 0; i < NPC_NUM; i++) {
+                    cout << NPCS[i]->getName() << "[" << NPCS[i]->getHealth() << "/" << NPCS[i]->getMaxHealth() << "]        ";
+                    if (i == 0) cout << endl;
+                }
+
+        cout << endl << endl <<
+                "Will you:" << endl <<
+                "[0]: Keep going" << endl <<
+                "[1]: Rest" << endl <<
+                "[2]: Save and Quit" << endl;
+        cin >> selection;
+
+        switch (selection) {
+        case 0:
+            cout << "You move forwards" << endl << endl << "Enemies ambush you!" << endl << endl;
+            battle(player, NPCS, NPC_NUM);
+            break;
+        case 1:
+            wait(player, NPCS, NPC_NUM, survivors);
+            break;
+        case 2:
+            saveGame(player, NPCS, NPC_NUM);
+            cout << "Game saved." << endl << endl << "Press any key to exit.";
+            cin.ignore();
+            exit(0);
+            break;
+        }
+        cout << endl << endl << endl << "There are " << survivors << " survivors in your town!";
+        if (survivors > 5000) cout << endl << "You had better hurry!" << endl;
+        else if (survivors > 2500) cout << endl << "You wonder how your family is." << endl;
+        else if (survivors > 1500) cout << endl << "There is little time left." << endl;
+        else if (survivors > 750) cout << endl << "You know your family is dead.  What reason is there to continue?" << endl;
+        else if (survivors > 250) cout << endl << "The darkness gets stronger." << endl;
+        else if (survivors > 200) cout << endl << "The darkness gets deeper." << endl;
+        else if (survivors > 150) cout << endl << "Maybe you should join the dead." << endl << endl << endl << "The darkness gets sweeter";
+        else if (survivors > 100) cout << endl << "The darkness calls." << endl;
+        else if (survivors > 50) cout << endl << "The darkness has arrived" << endl;
+        else if (survivors > 25) cout << endl << "There is only darnkess" << endl;
+        else if (survivors == 0) {
+            cout << endl << endl << "You have failed, and your village has perished." <<
+                    endl << endl << "You decide to join them." << endl <<
+                    endl << endl << "GAME OVER";
+            cin.ignore();
+            exit(0);
+        }
+    }
+}
+
 
 int main()
 {
+    tellStory();
     srand(time(0));
     NPC *CurrentNPCS[3];
     int NPC_NUM = 0;
@@ -304,6 +404,7 @@ int main()
     //Player player = Player();
     //loadGame(player, CurrentNPCS, NPC_NUM);
     Player *playerPtr = &player;
+    gameLoop(playerPtr, CurrentNPCS, NPC_NUM);
     while(true) {
         battle(playerPtr, CurrentNPCS, NPC_NUM);
     }
