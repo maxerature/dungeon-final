@@ -18,6 +18,7 @@ public:
 
     void setXP(int experience);
     void setXPToLevel(int XPToLevel);
+    void setHasKey(bool hasKey);
 
     void levelUp();
     bool getHasKey();

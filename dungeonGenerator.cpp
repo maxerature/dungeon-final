@@ -80,10 +80,20 @@ void Dungeon::generateDungeon() {
     dungeon[row][column] = 239;
     exitPos.x_pos = column;
     exitPos.y_pos = row;
+
+    for (int i = 0; i < 5; i++) {
+        row = rand() % 24 + 1;
+        column = rand() % 24 + 1;
+        if (dungeon[row][column] == ' ') {
+            dungeon[row][column] = 157;
+            keyPos[i].x_pos = column;
+            keyPos[i].y_pos = row;
+        }
+    }
 }
 
 
-void Dungeon::movePos(int direction)
+void Dungeon::movePos(int direction, int & keys)
 {
     switch (direction) {
     case 0:
@@ -112,9 +122,15 @@ void Dungeon::movePos(int direction)
         cout << endl << endl << "You've reached the next level!" << endl << endl;
         generateDungeon();
     }
+    for (int i = 0; i < 5; i++) {
+        if (playerPos == keyPos[i]) {
+            keys++;
+            dungeon[playerPos.y_pos][playerPos.x_pos] = ' ';
+        }
+    }
 }
 
-void Dungeon::Print(Player *player, NPC *NPCS[3], int &NPC_NUM)
+void Dungeon::Print(Player *player, NPC *NPCS[3], int &NPC_NUM, int keys)
 {
     for(int i = 0; i < 27; i++) {
         for (int j = 0; j < 27; j++) {
@@ -138,6 +154,9 @@ void Dungeon::Print(Player *player, NPC *NPCS[3], int &NPC_NUM)
             if (NPC_NUM >= 3) {
                 cout << "           " << NPCS[2]->getName() << "[" << NPCS[2]->getHealth() << "/" << NPCS[2]->getMaxHealth() << "]        ";
             }
+        }
+        if (i == 3) {
+            cout << "           KEY FRAGMENTS: [" << keys << "/200]";
         }
         if (i == 3) {
             cout << "           --INSTRUCTIONS--";

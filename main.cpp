@@ -209,10 +209,10 @@ void battle(Player *player, NPC *party[3], int &NPC_NUM) {
     double damage;
     double damagedHealth;
     Enemy *enemies[4] = {};
-    if (player->getHasKey()) {
-        enemyCount = 2;
+    if (player->getHasKey() == true) {
+        enemyCount = 1;
         for (int i = 0; i < enemyCount; i++) {
-            enemies[i] = new Enemy(generateRace(14), player->getLevel());
+            enemies[i] = new Enemy(generateBossRace(14) , player->getLevel());
         }
     }
     else {
@@ -354,40 +354,41 @@ void tellStory() {
             "it takes to retrieve the cure!  Go, and save as many of us as you can!" << endl << endl << endl << endl;
 }
 
-void endGame() {
+void endGame(Player *player, NPC *NPCS[3], int &NPC_NUM, int survivors) {
     cout << "You have retreived the cure for your village.  However, powerful monsters aer blocking the exit." << endl <<
             "Defeat them to save your village!";
+    battle(player, NPCS, NPC_NUM);
+    cout << endl << endl << "You have survived the enemy onslaught, and made your way to your village!" << endl << endl;
+    cout << "You saved " << survivors << " villagers!  You are driven from your town for your inability to save their loved ones." << endl <<
+            "Goodbye, hero.  You somehow know this would have happened even had you saved all 10000 people.";
+    cin.ignore();
+    exit(0);
 }
 
 int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
+    int keys = 0;
     int survivors = 10000;
     bool truth = true;
     int selection;
     int count;
-    cout << "Your Town has 10,000 People alive.  You must try to save as many as possible, by being as quick as possible." << endl << endl;
+    cout << "Your Town has 10,000 People alive.  You must try to save as many as possible, by being as quick as possible." << endl <<
+            "You can receive the cure either by randomly leveling up, or by collecting enough key fragments." << endl;
     while (true) {
-        fungeon.Print(player, NPCS, NPC_NUM);
+        fungeon.Print(player, NPCS, NPC_NUM, keys);
 
-        truth = true;
-        /*cout << endl << endl <<
-                player->getName() << "[" << player->getHealth() << "/" << player->getMaxHealth() << "]" << "       ";
-                for (int i = 0; i < NPC_NUM; i++) {
-                    cout << NPCS[i]->getName() << "[" << NPCS[i]->getHealth() << "/" << NPCS[i]->getMaxHealth() << "]        ";
-                    if (i == 0) cout << endl;
-                }*/
-        if (player->getHasKey()) {
-            endGame();
+        if (keys > 100) {
+            player->setHasKey(true);
         }
 
-        /*cout << endl << endl <<
-                "Will you:" << endl <<
-                "[Arrow Keys]: Move" << endl <<
-                "[Enter]: Rest" << endl <<
-                "[Escape]: Save and Quit" << endl;*/
+        truth = true;
+
+        if (player->getHasKey()) {
+            endGame(player, NPCS, NPC_NUM, survivors);
+        }
 
         switch((selection=_getch())) {
         case KEY_UP:
-            fungeon.movePos(1);
+            fungeon.movePos(1, keys);
             selection = rand() % 100 + 1;
             if (selection >= 85) {
                 cout << endl << "An enemy attacks!" << endl << endl;
@@ -395,21 +396,21 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
             }
             break;
         case KEY_DOWN:
-            fungeon.movePos(0);
+            fungeon.movePos(0, keys);
             if (selection >= 85) {
                 cout << endl << "An enemy attacks!" << endl << endl;
                 battle(player, NPCS, NPC_NUM);
             }
             break;
         case KEY_LEFT:
-            fungeon.movePos(2);
+            fungeon.movePos(2, keys);
             if (selection >= 85) {
                 cout << endl << "An enemy attacks!" << endl << endl;
                 battle(player, NPCS, NPC_NUM);
             }
             break;
         case KEY_RIGHT:
-            fungeon.movePos(3);
+            fungeon.movePos(3, keys);
             if (selection >= 85) {
                 cout << endl << "An enemy attacks!" << endl << endl;
                 battle(player, NPCS, NPC_NUM);
@@ -424,11 +425,6 @@ int gameLoop(Player *player, NPC *NPCS[3], int &NPC_NUM, Dungeon &fungeon) {
             cin.ignore();
             exit(0);
             break;
-        }
-        if (player->getHasKey()) {
-            cout << "You saved " << survivors << "Villagers!  You are driven from your town for your inability to save their loved ones.";
-            cin.ignore();
-            exit(0);
         }
         cout << endl << endl << endl << "There are " << survivors << " survivors in your town!";
         if (survivors > 5000) cout << endl << "You had better hurry!" << endl;

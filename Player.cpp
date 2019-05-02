@@ -47,6 +47,11 @@ void Player::setXPToLevel(int XPToLevel)
     this->XPToLevel = XPToLevel;
 }
 
+void Player::setHasKey(bool hasKey)
+{
+    this->hasKey = hasKey;
+}
+
 void Player::levelUp()
 {
     experience -= XPToLevel;
